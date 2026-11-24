@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#100b20">
+  <meta name="description" content="ZOE AI — مساحة محادثة شخصية">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/zoe.svg" type="image/svg+xml">\n  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>ZOE AI</title>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="avatar" aria-hidden="true">Z</div>
+        <div><h1>ZOE AI</h1><p>مساحتك الذكية</p></div>
+      </div>
+      <button id="memoryBtn" class="ghost" type="button">الذاكرة</button>
+    </header>
+
+    <section class="welcome" aria-label="ترحيب">
+      <div class="orb"><span>Z</span></div>
+      <h2>أهلاً عباس ✨</h2>
+      <p>أنا زوي — هذه النسخة الأولى من مساحتنا الرقمية.</p>
+      <p class="hint">حالياً الواجهة والذاكرة المحلية جاهزتان. ربط الذكاء الاصطناعي والصوت سيكون في مرحلة لاحقة.</p>
+    </section>
+
+    <section id="chat" class="chat" aria-live="polite">
+      <div class="message zoe">أهلاً بيك! شنو تحب نسوي اليوم؟ 💜</div>
+    </section>
+
+    <form id="composer" class="composer">
+      <textarea id="messageInput" rows="1" placeholder="اكتب رسالتك..." aria-label="رسالتك"></textarea>
+      <button class="send" type="submit" aria-label="إرسال">➤</button>
+    </form>
+
+    <footer>الإصدار 0.1 · تُحفظ هذه المحادثة على هذا الجهاز فقط</footer>
+  </main>
+
+  <dialog id="memoryDialog">
+    <form method="dialog" class="dialog-head">
+      <h2>ذاكرة زوي</h2>
+      <button class="ghost" aria-label="إغلاق">إغلاق ✕</button>
+    </form>
+    <p class="hint">أضف معلومة تريد أن تتذكرها هذه النسخة على هذا الجهاز. لا تُرسل إلى أي خادم.</p>
+    <form id="memoryForm" class="memory-form">
+      <input id="memoryInput" maxlength="300" placeholder="مثلاً: أفضل التحدث باللهجة العراقية">
+      <button class="send" type="submit">حفظ</button>
+    </form>
+    <ul id="memoryList"></ul>
+    <button id="clearMemory" class="danger" type="button">حذف كل الذكريات المحلية</button>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
