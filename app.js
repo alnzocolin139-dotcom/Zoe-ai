@@ -9,7 +9,7 @@ const memoriesKey = 'zoe_ai_memories_v1';
 const historyKey = 'zoe_ai_chat_v1';
 
 const API_URL =
-  'https://hidden-snowflake-f1c6.alnzocolin139.workers.dev';
+  'https://hidden-snowflake-f1c6.workers.dev';
 
 function read(key, fallback) {
   try {
