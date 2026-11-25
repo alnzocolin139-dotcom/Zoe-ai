@@ -6,14 +6,16 @@ export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
     const allowedOrigin =
-      origin === ALLOWED_ORIGIN ? origin : ALLOWED_ORIGIN;
+      origin === ALLOWED_ORIGIN ? origin : "";
 
     const headers = {
-      "Access-Control-Allow-Origin": allowedOrigin,
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Vary": "Origin"
-    };
+      ...(allowedOrigin
+    ? { "Access-Control-Allow-Origin": allowedOrigin }
+    : {}),
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Vary": "Origin"
+};
 
     const send = (data, status = 200) =>
       new Response(JSON.stringify(data), {
