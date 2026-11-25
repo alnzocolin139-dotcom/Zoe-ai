@@ -8,8 +8,8 @@ const memoryList = document.querySelector('#memoryList');
 const memoriesKey = 'zoe_ai_memories_v1';
 const historyKey = 'zoe_ai_chat_v1';
 
-const WORKER_URL =
-  'https://hidden-snowflake-f1c6.alnzocolin139.workers.dev/';
+const API_URL =
+  'https://hidden-snowflake-f1c6.alnzocolin139.workers.dev';
 
 function read(key, fallback) {
   try {
@@ -35,8 +35,6 @@ function addMessage(text, who, persist = true) {
     history.push({ text, who, at: Date.now() });
     save(historyKey, history.slice(-80));
   }
-
-  return el;
 }
 
 function renderHistory() {
@@ -47,23 +45,27 @@ function renderHistory() {
   }
 }
 
-async function askZoe(message) {
-  const response = await fetch(WORKER_URL, {
+async function askZoe(message, previousHistory) {
+  const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ message })
+    body: JSON.stringify({
+      message,
+      memories: read(memoriesKey, []),
+      history: previousHistory
+    })
   });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || 'Gemini API error');
+    throw new Error(data.error || 'حدث خطأ في الاتصال');
   }
 
-  if (typeof data.reply !== 'string' || !data.reply.trim()) {
-    throw new Error('لم يصل رد صالح من زوي.');
+  if (!data.reply) {
+    throw new Error('لم يصل رد من زوي');
   }
 
   return data.reply;
@@ -75,30 +77,29 @@ composer.addEventListener('submit', async e => {
   const text = input.value.trim();
   if (!text) return;
 
+  const previousHistory = read(historyKey, []).slice(-16);
+
   addMessage(text, 'user');
   input.value = '';
   input.style.height = 'auto';
 
-  const loading = addMessage('زوي تكتب لك... 💜', 'zoe', false);
+  const loading = document.createElement('div');
+  loading.className = 'message zoe';
+  loading.textContent = 'زوي تفكر... 💜';
+  chat.append(loading);
+  chat.scrollTop = chat.scrollHeight;
 
   try {
-    const reply = await askZoe(text);
-    loading.textContent = reply;
-
-    const history = read(historyKey, []);
-    history.push({
-      text: reply,
-      who: 'zoe',
-      at: Date.now()
-    });
-    save(historyKey, history.slice(-80));
-
+    const reply = await askZoe(text, previousHistory);
+    loading.remove();
+    addMessage(reply, 'zoe');
   } catch (error) {
-    loading.textContent =
-      'آسفة، صار عندي خلل بالاتصال: ' + error.message;
+    loading.remove();
+    addMessage(
+      'صار عندي خطأ بالاتصال بالخادم: ' + error.message,
+      'zoe'
+    );
   }
-
-  chat.scrollTop = chat.scrollHeight;
 });
 
 input.addEventListener('input', () => {
@@ -140,7 +141,6 @@ document.querySelector('#memoryForm').addEventListener('submit', e => {
 
   const field = document.querySelector('#memoryInput');
   const value = field.value.trim();
-
   if (!value) return;
 
   const arr = read(memoriesKey, []);
